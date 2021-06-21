@@ -21,7 +21,7 @@ class SupplierController extends Controller
 
     public function New()
     {
-        return view('pages/supplier_new')->with(['name'=>'uditha']);
+        return view('pages/supplier_new');
     }
 
 }

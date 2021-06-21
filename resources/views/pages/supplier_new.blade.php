@@ -105,7 +105,7 @@
                     var temp=0;
                     $.ajax({
                         type        : "POST",
-                        url         : "{{ url('/customer_name_val') }}",
+                        url         : "{{ url('/supplier_name_val') }}",
                         async       : false,
                         data        : {"cnam":cnam,"cid":cid},
                         headers     : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
