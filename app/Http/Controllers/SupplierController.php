@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cnfg_person_title;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -21,7 +22,10 @@ class SupplierController extends Controller
 
     public function New()
     {
-        return view('pages/supplier_new');
+        $title = Cnfg_person_title::where('sts','1')->get();
+        //dd($title);
+        $data = ['title'=>$title];
+        return view('pages/supplier_new')->with($data);
     }
 
 }

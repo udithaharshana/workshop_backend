@@ -21,12 +21,9 @@
                     <label class="col-md-3 control-label text-left">Supplier Name </label>
                     <div class="col-md-2 col-sm-2">
                             <select class="form-control select" name="nasi" id="nasi">
-                                    <option value="">Title</option>
-                                    <option value="1" >Rev</option>
-                                    <option value="2" selected >Mr</option>
-                                    <option value="3" >Mrs</option>
-                                    <option value="4" >Miss</option>
-                                    <option value="5" >Ms</option>
+                                    @foreach ($title as $row)
+                                        <option value="{{ $row['tid'] }} " > {{ $row['title'] }}</option>
+                                    @endforeach
                             </select>
                         </div>
                     <div class="col-md-4">
