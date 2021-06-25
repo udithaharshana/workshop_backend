@@ -13,6 +13,15 @@
 <!-- START PAGE CONTENT -->
 @section('content')
 <div class="row">
+    @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
     <form action="{{ url('supplier_save') }}" method="POST" id="frmdt" class="pt-2">
         @csrf
         <div class="col-md-12 pb-2">
@@ -22,12 +31,12 @@
                     <div class="col-md-2 col-sm-2">
                             <select class="form-control select" name="nasi" id="nasi">
                                     @foreach ($title as $row)
-                                        <option value="{{ $row['tid'] }} " > {{ $row['title'] }}</option>
+                                        <option value="{{ $row['tid'] }} " @if(old('nasi')==$row['tid']) selected @endif > {{ $row['title'] }}</option>
                                     @endforeach
                             </select>
                         </div>
                     <div class="col-md-4">
-                        <input type="text" class="form-control" id="sname" name="sname" autocomplete="off" value="{{ old('sname')}}">
+                        <input type="text" class="form-control"  id="sname" name="sname" autocomplete="off" value="{{ old('sname')}}">
                     </div>
                 </div>
                 <div class="form-group col-md-12">
@@ -71,7 +80,7 @@
 <script type="text/javascript">
     //Form Validation
     $(document).ready(function(){
-        /* $("#frmdt").validate({
+        $("#frmdt").validate({
             onsubmit : false, //Disables form submit validation
             onkeyup :false,  //Disables onkeyup validation
             onclick : false, //Disables onclick validation of checkboxes and radio buttons
@@ -84,140 +93,50 @@
                 }
             },
             rules:{
-                cnam:{required:true,chk_cnam:true}, //customer name
-                cadd:{required:true}, // customer address
-                alno:{alrtno:true,chk_alno:function(element) { return $("#alno").val()!=""; } }, // alert no
-                eadd:{email:true, chk_eadd:function(element) { return $('#eadd').val()!=""; } }, //email address
-                crlm:{number:true}, //credit limit
-                vtno:{checkvat:function(element) { return ($('#ptst').val()=="3" && $("#vtno").val() != '');}}
+                sname:{required:true,chk_sname:true}, //supplier name
+                saddr:{required:true}, // supplier address
             }
-        }); */
+        });
 
-        //Check Existing Customer name
-        jQuery.validator.addMethod("chk_cnam",function(value,element){
-            var cnam= $('#cnam').val();
-            if(cnam!=''){
+        //Check Existing supplier name
+        jQuery.validator.addMethod("chk_sname",function(value,element){
+            var sname= $('#sname').val();
+            if(sname!=''){
                 function valdt(){
-                    var cid=0;
-                    var temp=0;
+                    var sid = 0;
+                    var temp = 0;
                     $.ajax({
                         type        : "POST",
-                        url         : "{{ url('/supplier_name_val') }}",
+                        url         : "{{ url('/supplier_name_validate') }}",
                         async       : false,
-                        data        : {"cnam":cnam,"cid":cid},
+                        data        : {"sname":sname,"sid":sid},
                         headers     : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                        beforeSend  : function(){$("body").css("cursor","wait"); $('#cnam').addClass('data_loading');},
-                        success     : function(msg){ temp=msg; $("body").css("cursor","default"); $('#cnam').removeClass('data_loading');},
-                        error       : function(){ $("body").css("cursor","default"); $('#cnam').removeClass('data_loading'); console.log("Error");  }
+                        beforeSend  : function(){$("body").css("cursor","wait"); $('#sname').addClass('data_loading');},
+                        success     : function(msg){ temp=msg; $("body").css("cursor","default"); $('#sname').removeClass('data_loading');},
+                        error       : function(){ $("body").css("cursor","default"); $('#sname').removeClass('data_loading'); console.log("Error");  }
                     });
                     return temp;
                 }
                 var vlrs = valdt();
-                    vlrs = parseInt(vlrs);
-                if(vlrs > '0'){
+
+                if(vlrs){
                     return false;
                 }else {
                     return true;
                 }
                 }
-        },"Already Existing Customer Name");
-
-        //Check Existing Email Address
-        jQuery.validator.addMethod("chk_eadd",function(value,element){
-            var eadd= $('#eadd').val();
-                function valdt(){
-                    if(eadd!=''){
-                        var cid=0;
-                        var temp=0;
-                        $.ajax({
-                            type        : "POST",
-                            url         : "{{ url('/customer_email_val') }}",
-                            async       : false,
-                            data        : {"eadd":eadd,"cid":cid},
-                            headers     : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                            beforeSend  : function(){$("body").css("cursor","wait"); $('#eadd').addClass('data_loading');},
-                            success     : function(msg){ temp=msg; $("body").css("cursor","default"); $('#eadd').removeClass('data_loading'); },
-                            error       : function(){ $("body").css("cursor","default"); $('#eadd').removeClass('data_loading'); console.log("Error");  }
-                        });
-                    return temp;
-                    }
-                }
-                var vlrs = valdt();
-                if(vlrs==undefined){
-                    return true;
-                }else{
-                    vlrs = parseInt(vlrs);
-                    if(vlrs > '0'){
-                        return false;
-                    }else {
-                        return true;
-                    }
-                }
-        },"Already Existing Email Address");
-
-        //Check Existing alert number
-        jQuery.validator.addMethod("chk_alno",function(value,element){
-            var alno= $('#alno').val();
-                function valdt(){
-                    if(alno!=''){
-                        var cid=0;
-                        var temp=0;
-                        $.ajax({
-                            type        : "POST",
-                            url         : "{{ url('/customer_alertno_val') }}",
-                            async       : false,
-                            data        : {"alno":alno,"cid":cid},
-                            headers     : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                            beforeSend  : function(){$("body").css("cursor","wait"); $('#alno').addClass('data_loading');},
-                            success     : function(msg){ temp=msg; $("body").css("cursor","default"); $('#alno').removeClass('data_loading');},
-                            error       : function(){ $("body").css("cursor","default"); $('#alno').removeClass('data_loading'); console.log("Error");  }
-                        });
-                        return temp;
-                    }
-                }
-                var vlrs = valdt();
-                if(vlrs==undefined){
-                    return true;
-                }else{
-                    vlrs = parseInt(vlrs);
-                    if(vlrs > '0'){
-                        return false;
-                    }else {
-                        return true;
-                    }
-                }
-        },"Already Existing Alert Number");
-
-        //check VAT Number
-        jQuery.validator.addMethod("checkvat",function(value,element){
-            function valdt(){
-                var temp=0;
-                $.ajax({
-                    type:"POST",
-                    url:"{{ url('/customer_checkvat_number') }}",
-                    async:false,
-                    data:{"vtno":value},
-                    headers:{'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                    beforeSend: function(){$("body").css("cursor","wait");$("#"+element.id).addClass('data_loading');},
-                    success: function(msg){temp=msg; $("body").css("cursor","default"); $("#"+element.id).removeClass('data_loading');},
-                    error:function(){ $("body").css("cursor","default"); console.log("Error"); $("#"+element.id).removeClass('data_loading'); }
-                });
-                return temp;
-            }
-            var vlrs=valdt();
-            if(vlrs == 0){return false;}else{return true;}
-        },"VAT Already Exist");
+        },"Already Existing Supplier Name");
 
     });
 
     //Form Save
     $(document).ready(function(){
         $('#savfm').click(function(e){
-            var frmdt= true; //$('#frmdt').valid();
+            var frmdt= true;//$('#frmdt').valid();
             if(frmdt==true){
                 $("body").css("cursor","wait");
                 $(".loader").fadeIn('slow');
-                //document.forms["frmdt"].submit();
+                document.forms["frmdt"].submit();
             }else{
                 console.error('Validation Error');
             }

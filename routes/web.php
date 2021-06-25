@@ -14,6 +14,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/supplier_home', 'SupplierController@HomePage');
+
+
 Route::get('/supplier_new', 'SupplierController@New');
+
+Route::post('/supplier_name_validate', 'SupplierController@name_validate');
+Route::post('/supplier_save', 'SupplierController@save');
 
 

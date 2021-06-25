@@ -16,4 +16,10 @@ class Cnfg_person_title extends Model
         return DB::select('select * from cnfg_person_titles where sts="1" ');
     }
 
+    public function result2()
+    {
+        return DB::table('cnfg_person_titles')
+                    ->where('sts','1')
+                    ->get();
+    }
 }
