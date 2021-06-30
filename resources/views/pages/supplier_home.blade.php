@@ -32,7 +32,7 @@
 <script type="text/javascript">
 //function for load datatable data
 $(document).ready(function(){
-  //data_load();
+  data_load();
 })
 function data_load(){
     var table_1=$('#dttbl').DataTable({
@@ -40,8 +40,8 @@ function data_load(){
                             { data  : "name" },
                             { data  : "address" },
                             { data  : "email" },
-                            { data  : "other_phone" },
-                            { data  : "remark" },
+                            { data  : "contcat_no" },
+                            { data  : "rmk" },
                             { data  : "sts" }
                         ],
         'ordering'      : false,
@@ -79,14 +79,14 @@ function data_load(){
                                     var actvbtn = "";
                                     var btnlist = "";
                                     if(row.sts == 1){
-                                        actvbtn='<button type="button" style="width:80px;" data-key="'+row.ekp+'" class="btn btn-success prvw" id="'+row.sid+'" >Preview</button>';
-                                        btnlist='<li><a data-id="'+row.sts+'" data-key="'+row.eke+'" class="edit" id="'+row.sid+'"><i class="fa fa-edit "></i>Edit</a></li><li>';
+                                        actvbtn='<button type="button" style="width:80px;" class="btn btn-success prvw" id="'+row.sid+'" >Preview</button>';
+                                        btnlist='<li><a class="edit" id="'+row.sid+'"><i class="fa fa-edit "></i>Edit</a></li><li>';
                                     }else if(row.sts == 2){
-                                        actvbtn='<button type="button" style="width:80px;" data-key="'+row.ekp+'" class="btn btn-suspend prvw" id="'+row.sid+'" >Preview</button>';
-                                        btnlist='<li><a href="#" data-id="'+row.sts+'" data-key="'+row.eke+'" class="edit" id="'+row.sid+'"><i class="fa fa-edit "></i>Edit</a></li><li>';
+                                        actvbtn='<button type="button" style="width:80px;" class="btn btn-suspend prvw" id="'+row.sid+'" >Preview</button>';
+                                        btnlist='<li><a href="#"  class="edit" id="'+row.sid+'"><i class="fa fa-edit "></i>Edit</a></li><li>';
                                     }else{
-                                        actvbtn='<button type="button" style="width:80px;" data-key="'+row.ekp+'" class="btn btn-danger prvw" id="'+row.sid+'" >Preview</button>';
-                                        btnlist='<li><a href="#" data-id="'+row.sts+'" data-key="'+row.eke+'" class="edit" id="'+row.sid+'"><i class="fa fa-edit "></i>Edit</a></li><li>';
+                                        actvbtn='<button type="button" style="width:80px;"  class="btn btn-danger prvw" id="'+row.sid+'" >Preview</button>';
+                                        btnlist='<li><a href="#" class="edit" id="'+row.sid+'"><i class="fa fa-edit "></i>Edit</a></li><li>';
                                     }
                                         return '<div class="btn-group" >'+actvbtn+'<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></button><ul class="dropdown-menu dropdown-menu-right" role="menu">'+btnlist+'</ul></div>';
 
@@ -112,14 +112,9 @@ function data_load(){
   //send prvw id to prvw page
   $('#dttbl').on('click', '.prvw', function(e) {
 	e.preventDefault();
-    var token=$(this).attr('data-key');
-    if(token=='#'){
-        document.getElementById('info_msgcontent').innerHTML="Access Forbidden! Sorry, You don't have permission to access this form or report requested by you. It is either read-protected or not readable by the system administrator. Please contact your system administrator for more details about this problem. Sorry for the inconvenience.";
-        $('#message-box-info').toggleClass("open");
-        return false;
-    }else{
-        $.redirect( '{{ url("/suplmas_prvw") }}' , {"token": token }, "GET", "_self" );
-    }
+    var sid = $(this).attr('id');
+    $.redirect( '{{ url("/supplier_preview") }}' , {"sid": sid }, "GET", "_self" );
+
 });
 
 </script>

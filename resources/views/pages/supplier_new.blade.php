@@ -29,9 +29,9 @@
                 <div class="form-group col-md-12" >
                     <label class="col-md-3 control-label text-left">Supplier Name </label>
                     <div class="col-md-2 col-sm-2">
-                            <select class="form-control select" name="nasi" id="nasi">
+                            <select class="form-control select" name="tid" id="tid">
                                     @foreach ($title as $row)
-                                        <option value="{{ $row['tid'] }} " @if(old('nasi')==$row['tid']) selected @endif > {{ $row['title'] }}</option>
+                                        <option value="{{ $row['tid'] }} " @if(old('tid')==$row['tid']) selected @endif > {{ $row['title'] }}</option>
                                     @endforeach
                             </select>
                         </div>

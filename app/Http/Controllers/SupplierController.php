@@ -14,6 +14,7 @@ use Yajra\Datatables\Datatables;
 
 class SupplierController extends Controller
 {
+
     /* Supplier Home Page */
     public function HomePage()
     {
@@ -63,6 +64,7 @@ class SupplierController extends Controller
             }else{
 
                 $supplier = new Supplier();
+                $supplier->tid = $request->tid;
                 $supplier->name = $request->sname;
                 $supplier->address = $request->saddr;
                 $supplier->email = $request->email;
@@ -71,18 +73,38 @@ class SupplierController extends Controller
                 $supplier->sts = 1;
                 $supplier->create_user_id = 1;
 
-                $date = new DateTime();
-                $dtdate1 = $date->format('Y-m-d');
-
-                $supplier->create_date_time = $dtdate1;
+                $supplier->create_date_time = $this->dtdatetime;
                 $supplier->save();
 
                 return redirect('/supplier_home');
             }
 
         }catch(Exception $e){
-            dd($e->getMessage());
+
+            return  App::environment('local') ? dd($e->getMessage(),$e->getLine()) : '';
         }
 
+    }
+
+    public function HomeData(Request $request){
+
+        try{
+            $data = new Supplier();
+            if($request->search){
+                $data = $data->Where('name','LIKE', "%{$request->search}%")
+                ->orWhere('email','LIKE', "%{$request->search}%")
+                ->orWhere('contcat_no','LIKE', "%{$request->search}%");
+            }
+            $data = $data->where('sid','!=','1')->get();
+
+            return Datatables::of($data)->toJson();
+
+        }catch(Exception $e){
+            return response('');
+        }
+    }
+
+    public function Preview(Request $request){
+        dd($request->sid);
     }
 }
