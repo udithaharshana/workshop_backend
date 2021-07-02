@@ -98,14 +98,8 @@ function data_load(){
   //send prvw id to edit page
   $('#dttbl').on('click', '.edit', function(e) {
 	e.preventDefault();
-    var token=$(this).attr('data-key');
-    if(token=='#'){
-        document.getElementById('info_msgcontent').innerHTML="Access Forbidden! Sorry, You don't have permission to access this form or report requested by you. It is either read-protected or not readable by the system administrator. Please contact your system administrator for more details about this problem. Sorry for the inconvenience.";
-        $('#message-box-info').toggleClass("open");
-        return false;
-    }else{
-        $.redirect( '{{ url("/suplmas_edit") }}' , {"token": token }, "GET", "_self" );
-    }
+    var sid = $(this).attr('id');
+    $.redirect( '{{ url("/supplier_edit") }}' , {"sid": sid }, "GET", "_self" );
 });
 
 

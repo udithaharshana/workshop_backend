@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\DB;
 use Exception;
 use DateTime;
 use Yajra\Datatables\Datatables;
@@ -105,6 +106,33 @@ class SupplierController extends Controller
     }
 
     public function Preview(Request $request){
-        dd($request->sid);
+        try{
+            $supplier = Supplier::with(['title_name:tid,title','create_user_name:id,name', 'update_user_name:id,name' ])->find($request->sid);
+
+            /* $data = DB::table('suppliers')
+                        //->select('supplier.name','supplier.email')
+                        ->selectRaw('suppliers.*, create.name AS create_user, update.name AS update_user')
+                        ->leftJoin('users AS create','create.id','=','suppliers.create_user_id')
+                        ->leftJoin('users AS update','update.id','=','suppliers.update_user_id')
+                        ->where('sid',$request->sid)
+                        ->first(); */
+            return view('pages/supplier_preview')->with(['supplier'=>$supplier]);
+
+        }catch(Exception $e){
+            dd($e->getMessage());
+        }
+    }
+
+    public function Edit(Request $request){
+        try{
+            $supplier = Supplier::find($request->sid);
+            $title = Cnfg_person_title::where('sts','1')->get();
+
+            return view('pages/supplier_edit')->with(['supplier'=>$supplier, 'title'=>$title]);
+
+
+        }catch(Exception $e){
+            dd($e->getMessage());
+        }
     }
 }

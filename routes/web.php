@@ -15,13 +15,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/supplier_home', 'SupplierController@HomePage');
 Route::get('/suplmas_home_data', 'SupplierController@HomeData');
-
-
 Route::get('/supplier_new', 'SupplierController@New');
+Route::get('/supplier_preview', 'SupplierController@Preview');
+Route::get('/supplier_edit', 'SupplierController@Edit');
 
 Route::post('/supplier_name_validate', 'SupplierController@name_validate');
 Route::post('/supplier_save', 'SupplierController@save');
 
-Route::get('/supplier_preview', 'SupplierController@Preview');
 
 
