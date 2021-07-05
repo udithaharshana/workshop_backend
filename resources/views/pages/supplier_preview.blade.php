@@ -16,7 +16,7 @@
                     <tbody>
                         <tr><th>Supplier Name</th>      <td>{{ $supplier->title_name->title}}. {{ $supplier->name }}</td></tr>
                         <tr><th>Supplier Address</th>   <td>{{ $supplier->address }}</td></tr>
-                        <tr><th>Contact No</th>           <td>{{ $supplier->contact_no }}</td></tr>
+                        <tr><th>Contact No</th>           <td>{{ $supplier->contcat_no }}</td></tr>
                         <tr><th>Email Address</th>      <td>{{ $supplier->email }}</td></tr>
                     </tbody>
                 </table>
@@ -49,7 +49,7 @@
                     </tr>
                     <tr><td width="200">Created By</td><td class="text-right">{{ $supplier->create_user_name->name }}</td></tr>
                     <tr><td width="200">Created Date & Time</td><td class="text-right">{{ $supplier->create_date_time }}</td></tr>
-                    @if($supplier->update_user!=null)
+                    @if($supplier->update_user_name!=null)
                     <tr><td width="200">Last Edited By</td><td class="text-right"> {{ $supplier->update_user_name->name  }}</td></tr>
                     <tr><td width="200">Last Edited Date & Time</td><td class="text-right">{{ $supplier->update_date_time }} </td></tr>
                     @endif
@@ -69,7 +69,7 @@
 $('#edit').click(function(e){
 	e.preventDefault();
     var sid = '{{$supplier->sid}}';
-    $.redirect("{{ url('supplier_edit') }}", {"sid": sid }, "GET", "_self" );
+    $.redirect( '{{ url("/supplier_edit") }}' , {"sid": sid }, "GET", "_self" );
 });
 </script>
 @endsection

@@ -23,6 +23,8 @@
 @endif
     <form action="{{ url('supplier_save') }}" method="POST" id="frmdt" class="pt-2">
         @csrf
+        <input type="hidden" name="sid" id="sid" value="{{$supplier->sid }}">
+        <input type="hidden" name="stss" id="stss" value="{{$supplier->sts }}">
         <div class="col-md-12 pb-2">
             <div class="col-md-6" >
                 <div class="form-group col-md-12" >
@@ -35,7 +37,7 @@
                             </select>
                         </div>
                     <div class="col-md-4">
-                        <input type="text" class="form-control"  id="sname" name="sname" autocomplete="off" value="@if(old('sname')) {{ old('sname')}} @else {{$supplier->name}} @endif">
+                        <input type="text" class="form-control"  id="sname" name="sname" autocomplete="off" value="@if(old('sname')){{ old('sname')}}@else{{$supplier->name}}@endif">
                     </div>
                 </div>
                 <div class="form-group col-md-12">
@@ -47,7 +49,7 @@
                 <div class="form-group col-md-12">
                     <label class="col-md-3 control-label text-left">Contact No</label>
                     <div class="col-md-6">
-                        <input type="text" class="form-control" id="contacts" name="contacts" autocomplete="off" value="{{$supplier->contact_no}}" >
+                        <input type="text" class="form-control" id="contacts" name="contacts" autocomplete="off" value="{{$supplier->contcat_no}}" >
                     </div>
                 </div>
                 <div class="form-group col-md-12">
@@ -70,13 +72,84 @@
     </form>
 </div>
 @endsection
-
+@section('notify_status')
+ <!-- Status Details -->
+ <div class="col-md-12">
+    <div class="col-md-4"></div>
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+        <div class="panel panel-default" id="acdtlp" style="height:100%">
+            <div class="panel-body">
+                <h3 class="text-title" style="padding-bottom:10px;"><span class="fa fa-bell">&nbsp;</span>Status</h3>
+                <div class="invoice">
+                    <table class="table table-striped ">
+                        <tr><td width="150" class="">Status</td>
+                        <td class="text-right">
+                        <div class="btn-group" role="group">
+                            <button type="button" id="opt1" class="btn btn-@if ($supplier->sts==1)success @else light @endif">Active</button>
+                            <button type="button" id="opt0" class="btn btn-@if ($supplier->sts==0)danger  @else light @endif">Inactive</button>
+                            <button type="button" id="opt2" class="btn btn-@if ($supplier->sts==2)suspend @else light @endif">Suspend</button>
+                            </div>
+                        </td>
+                        </tr>
+                        <tr><td width="150">Created By</td><td class="text-right">{{ $supplier->create_user_name->name }}</td></tr>
+                        <tr><td width="150">Created Date & Time</td><td class="text-right">{{ $supplier->create_date_time }}</td></tr>
+                        @if($supplier->update_user_name!=null)
+                        <tr><td width="200">Last Edited By</td><td class="text-right"> {{ $supplier->update_user_name->name  }}</td></tr>
+                        <tr><td width="200">Last Edited Date & Time</td><td class="text-right">{{ $supplier->update_date_time }} </td></tr>
+                        @endif
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /.end Status Details -->
+@endsection
 <!-- END PAGE CONTENT -->
 
 <!-- START SCRIPT -->
 @section('myscript')
 <script type="text/javascript" src="{{ asset('/theme/js/plugins/bootstrap/bootstrap-select.js') }}"></script>
 <script type="text/javascript">
+
+//change status button
+$(document).ready(function() {
+    $("#opt1").click(function() {
+        if(!$('#opt1').hasClass('btn btn-success')){
+            $(this).removeClass('btn btn-light').addClass('btn btn-success');
+                if ($('#opt0').hasClass('btn btn-danger')) {
+                    $('#opt0').removeClass('btn btn-danger').addClass('btn btn-light');
+                }else{
+                    $('#opt2').removeClass('btn btn-suspend').addClass('btn btn-light');//
+                }
+            }
+            $('#stss').val("1");
+    });
+    $("#opt0").click(function() {
+        if(!$('#opt0').hasClass('btn btn-danger')){
+            $(this).removeClass('btn btn-light').addClass('btn btn-danger');
+                if ($('#opt1').hasClass('btn btn-success')) {
+                    $('#opt1').removeClass('btn btn-success').addClass('btn btn-light');
+                }else{
+                    $('#opt2').removeClass('btn btn-suspend').addClass('btn btn-light');//
+                }
+        }
+            $('#stss').val("0");
+    });
+    $("#opt2").click(function() {
+        if(!$('#opt2').hasClass('btn btn-suspend')){
+        $(this).removeClass('btn btn-light').addClass('btn btn-suspend');
+            if ($('#opt1').hasClass('btn btn-success')) {
+                $('#opt1').removeClass('btn btn-success').addClass('btn btn-light');
+            }else{
+                $('#opt0').removeClass('btn btn-danger').addClass('btn btn-light');
+            }
+        }
+            $('#stss').val("2");
+    });
+});
+
     //Form Validation
     $(document).ready(function(){
         $("#frmdt").validate({
@@ -100,9 +173,10 @@
         //Check Existing supplier name
         jQuery.validator.addMethod("chk_sname",function(value,element){
             var sname= $('#sname').val();
+            var sid = $('#sid').val();
+
             if(sname!=''){
                 function valdt(){
-                    var sid = 0;
                     var temp = 0;
                     $.ajax({
                         type        : "POST",

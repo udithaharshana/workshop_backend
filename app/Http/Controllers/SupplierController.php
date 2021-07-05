@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Exception;
 use DateTime;
 use Yajra\Datatables\Datatables;
@@ -37,7 +38,7 @@ class SupplierController extends Controller
 
     public function name_validate(Request $request)
     {
-        $data = Supplier::where('name',$request->sname)->exists();
+        $data = Supplier::where('name',$request->sname)->where('sid','!=',$request->sid)->exists();
         return response()->json($data);
     }
 
@@ -45,9 +46,9 @@ class SupplierController extends Controller
         try{
 
             $rules =[
-                'sname' => 'required|unique:suppliers,name',
+                'sname' => ['required',Rule::unique('suppliers','name')->ignore($request->sid,'sid') ],
                 'saddr' => 'required',
-                'email' => 'nullable|email|unique:suppliers,email',
+                'email' => ['nullable','email',Rule::unique('suppliers','email')->ignore($request->sid,'sid')]
             ];
             $customMessages =[
                 'sname.required' => 'Supplier Name is required',
@@ -64,17 +65,24 @@ class SupplierController extends Controller
                 return redirect()->back()->withErrors($validatedData)->withInput();
             }else{
 
-                $supplier = new Supplier();
+                $supplier = $request->sid ? Supplier::find($request->sid) : new Supplier();
                 $supplier->tid = $request->tid;
                 $supplier->name = $request->sname;
                 $supplier->address = $request->saddr;
                 $supplier->email = $request->email;
                 $supplier->contcat_no = $request->contacts;
                 $supplier->rmk = $request->remark;
-                $supplier->sts = 1;
-                $supplier->create_user_id = 1;
 
-                $supplier->create_date_time = $this->dtdatetime;
+                $supplier->sts = $request->sid ? $request->stss : 1;
+
+                if($request->sid){
+                    $supplier->update_user_id = 1;
+                    $supplier->update_date_time = $this->dtdatetime;
+                }else{
+                    $supplier->create_user_id = 1;
+                    $supplier->create_date_time = $this->dtdatetime;
+                }
+
                 $supplier->save();
 
                 return redirect('/supplier_home');
